@@ -390,6 +390,16 @@ def test_create_master_principal(ws):
             create_uber_principal(ws, subscription_id="12")
 
 
+def test_create_master_principal_aws(ws, mocker):
+    mocker.patch("shutil.which", return_value=True)
+    ws.config.is_azure = False
+    ws.config.is_aws = True
+    ws.config.is_gcp = False
+    with patch("databricks.labs.blueprint.tui.Prompts.question", return_value=True):
+        with pytest.raises(ResourceWarning):
+            create_uber_principal(ws, aws_profile="profile")
+
+
 def test_migrate_locations_azure(ws):
     ws.config.is_azure = True
     ws.config.is_aws = False
@@ -398,9 +408,8 @@ def test_migrate_locations_azure(ws):
     ws.external_locations.list.assert_called()
 
 
-@pytest.mark.skip
 def test_migrate_locations_aws(ws, caplog, mocker):
-    mocker.patch("shutil.which", return_value="/path/aws")
+    mocker.patch("shutil.which", return_value=True)
     ws.config.is_azure = False
     ws.config.is_aws = True
     ws.config.is_gcp = False

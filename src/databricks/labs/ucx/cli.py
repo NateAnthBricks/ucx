@@ -423,8 +423,7 @@ def migrate_locations(w: WorkspaceClient, aws_profile: str | None = None):
         config = installation.load(WorkspaceConfig)
         sql_backend = StatementExecutionBackend(w, config.warehouse_id)
         aws = AWSResources(aws_profile)
-        location = ExternalLocations(w, sql_backend, config.inventory_database)
-        aws_permissions = AWSResourcePermissions.for_cli(w, sql_backend, aws, location, config.inventory_database)
+        aws_permissions = AWSResourcePermissions.for_cli(w, installation, sql_backend, aws, config.inventory_database)
         aws_permissions.create_external_locations()
     if w.config.is_gcp:
         logger.error("migrate_locations is not yet supported in GCP")
