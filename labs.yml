@@ -143,3 +143,6 @@ commands:
   - name: create-catalogs-schemas
     description: Create UC external catalogs and schemas based on the destinations created from create_table_mapping command.
       This command is supposed to be run before migrating tables to UC.
+
+  - name: lsp
+    description: LSP backend

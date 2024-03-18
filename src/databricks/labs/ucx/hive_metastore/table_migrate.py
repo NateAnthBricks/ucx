@@ -36,6 +36,9 @@ class MigrationStatus:
     dst_table: str | None = None
     update_ts: str | None = None
 
+    def destination(self):
+        return f"{self.dst_catalog}.{self.dst_schema}.{self.dst_table}".lower()
+
 
 class TablesMigrate:
     def __init__(

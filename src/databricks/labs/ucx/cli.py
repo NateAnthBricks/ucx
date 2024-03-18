@@ -19,11 +19,13 @@ from databricks.labs.ucx.aws.credentials import IamRoleMigration
 from databricks.labs.ucx.azure.access import AzureResourcePermissions
 from databricks.labs.ucx.azure.credentials import ServicePrincipalMigration
 from databricks.labs.ucx.azure.locations import ExternalLocationsMigration
+from databricks.labs.ucx.code.languages import Languages
+from databricks.labs.ucx.code.lsp import Lsp
 from databricks.labs.ucx.config import WorkspaceConfig
 from databricks.labs.ucx.hive_metastore import ExternalLocations, TablesCrawler
 from databricks.labs.ucx.hive_metastore.catalog_schema import CatalogSchema
 from databricks.labs.ucx.hive_metastore.mapping import TableMapping
-from databricks.labs.ucx.hive_metastore.table_migrate import TableMove, TablesMigrate
+from databricks.labs.ucx.hive_metastore.table_migrate import TableMove, TablesMigrate, Index, MigrationStatus
 from databricks.labs.ucx.install import WorkspaceInstallation
 from databricks.labs.ucx.workspace_access.groups import GroupManager
 
@@ -497,6 +499,27 @@ def create_catalogs_schemas(w: WorkspaceClient, prompts: Prompts):
     installation = Installation.current(w, 'ucx')
     catalog_schema = CatalogSchema.for_cli(w, installation, prompts)
     catalog_schema.create_catalog_schema()
+
+
+@ucx.command
+def lsp(w: WorkspaceClient, prompts: Prompts):
+    """LSP experiment"""
+    languages = Languages(Index(
+        [
+            MigrationStatus(
+                src_schema='old', src_table='things', dst_catalog='brand', dst_schema='new', dst_table='stuff'
+            ),
+            MigrationStatus(
+                src_schema='other',
+                src_table='matters',
+                dst_catalog='some',
+                dst_schema='certain',
+                dst_table='issues',
+            ),
+        ]
+    ))
+    Lsp(languages).serve()
+
 
 
 if __name__ == "__main__":
